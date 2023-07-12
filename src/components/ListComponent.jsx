@@ -21,7 +21,6 @@ const ListComponent = () => {
         fetch('http://api.minebrat.com/api/v1/states')
             .then(response => response.json())
             .then(states => { setStates(states) });
-        console.log(states);
     }, []);
 
     const handleSubmit = (stateId) => {

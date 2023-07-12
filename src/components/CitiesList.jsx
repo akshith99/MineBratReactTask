@@ -7,12 +7,12 @@ const CitiesList = (props) => {
 
     const [city, setCity] = useState("");
 
+    console.log(city);
 
     useEffect(() => {
         fetch(`https://api.minebrat.com/api/v1/states/cities/${props.stateId}`)
             .then(response => response.json())
             .then(cities => { setCities(cities) });
-        console.log(cities);
     }, [props.stateId]);
 
     return (
