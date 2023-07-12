@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ResultComponent from "./ResultComponent";
 import CitiesList from "./CitiesList";
 
@@ -16,6 +16,8 @@ const ListComponent = () => {
 
     const [resultVisible, setResultVisible] = useState(false);
 
+    const ref = useRef();
+
 
     useEffect(() => {
         fetch('http://api.minebrat.com/api/v1/states')
@@ -31,7 +33,10 @@ const ListComponent = () => {
         console.log(selectedState);
         setState(selectedState);
 
+        ref.current.selectedCity();
+
         setResultVisible(true);
+
     }
 
     const handleCitySubmit = (city) => {
@@ -42,11 +47,13 @@ const ListComponent = () => {
     return (
         <>
             <select
-                onChange={(event) => {
+                defaultValue={'DEFAULT'}
+                onClick={(event) => {
                     console.log(event.target.value);
                     setStateId(event.target.value);
                 }}
             >
+                <option value="DEFAULT" disabled>Select a state</option>
                 {states.map((state) => {
                     return (
                         <option
@@ -59,14 +66,18 @@ const ListComponent = () => {
                 })}
             </select>
 
-            <CitiesList stateId={stateId} onChange={handleCitySubmit} />
+            <CitiesList ref={ref} stateId={stateId} onChange={handleCitySubmit} />
 
             <button
                 type="submit"
                 onClick={() => { handleSubmit(stateId) }}
             >Submit</button>
 
-            {resultVisible && <ResultComponent state={state} city={city} />}
+            {resultVisible && city.length > 0 && state.length > 0 &&
+                <ResultComponent state={state} city={city} />}
+
+            {!resultVisible && city.length <= 0 && state.length <= 0 &&
+                <p>Oops..., It is lonely here.</p>}
         </>
     );
 }

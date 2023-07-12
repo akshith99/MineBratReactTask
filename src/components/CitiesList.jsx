@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 
-const CitiesList = (props) => {
+const CitiesList = forwardRef((props, ref) => {
 
     const [cities, setCities] = useState([]);
 
@@ -15,14 +15,22 @@ const CitiesList = (props) => {
             .then(cities => { setCities(cities) });
     }, [props.stateId]);
 
+    useImperativeHandle(ref, () => ({
+        selectedCity: () => {
+            props.onChange(city);
+        },
+    }));
+
     return (
         <>
-            <select onChange={(event) => {
-                console.log(event.target.value);
-                setCity(event.target.value);
-                props.onChange(event.target.value);
-            }}
+            <select
+                defaultValue={'DEFAULT'}
+                onClick={(event) => {
+                    console.log(event.target.value);
+                    setCity(event.target.value);
+                }}
             >
+                <option value="DEFAULT" disabled>Select a city</option>
                 {cities.map((city) => {
                     return (
                         <option key={city.cityId} value={city.cityName}>{city.cityName}</option>
@@ -32,6 +40,6 @@ const CitiesList = (props) => {
         </>
     );
 
-};
+});
 
 export default CitiesList;
