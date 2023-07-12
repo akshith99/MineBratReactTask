@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ResultComponent from "./ResultComponent";
+import CitiesList from "./CitiesList";
 
 
 
@@ -9,11 +10,7 @@ const ListComponent = () => {
 
     const [stateId, setStateId] = useState(1);
 
-    const [cityId, setCityId] = useState(1);
-
     const [state, setState] = useState("");
-
-    const [cities, setCities] = useState([]);
 
     const [city, setCity] = useState("");
 
@@ -27,27 +24,20 @@ const ListComponent = () => {
         console.log(states);
     }, []);
 
-    useEffect(() => {
-        fetch(`https://api.minebrat.com/api/v1/states/cities/${stateId}`)
-            .then(response => response.json())
-            .then(cities => { setCities(cities) });
-        console.log(cities);
-    }, [stateId]);
-
-    const handleSubmit = (stateId, cityId) => {
+    const handleSubmit = (stateId) => {
 
         const filteredState = states.filter((state) => state.stateId === stateId);
-        var selectedState = filteredState.map((item) => item.stateName);
+        let selectedState = filteredState.map((item) => item.stateName);
         selectedState = selectedState[0];
         console.log(selectedState);
         setState(selectedState);
 
-        const filteredCity = cities.filter((city) => city.cityId === cityId);
-        var selectedCity = filteredCity.map((item) => item.cityName);
-        selectedCity = selectedCity[0];
-        setCity(selectedCity);
-
         setResultVisible(true);
+    }
+
+    const handleCitySubmit = (city) => {
+        setCity(city);
+        console.log("city is", city);
     }
 
     return (
@@ -70,20 +60,11 @@ const ListComponent = () => {
                 })}
             </select>
 
-            <select onChange={(event) => {
-                console.log(event.target.value);
-                setCityId(event.target.value);
-            }}>
-                {cities.map((city) => {
-                    return (
-                        <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
-                    );
-                })}
-            </select>
+            <CitiesList stateId={stateId} onChange={handleCitySubmit} />
 
             <button
                 type="submit"
-                onClick={() => { handleSubmit(stateId, cityId) }}
+                onClick={() => { handleSubmit(stateId) }}
             >Submit</button>
 
             {resultVisible && <ResultComponent state={state} city={city} />}

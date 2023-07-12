@@ -1,22 +1,11 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 
-const CitiesList = forwardRef((props, ref) => {
+const CitiesList = (props) => {
 
     const [cities, setCities] = useState([]);
 
-    const [cityId, setCityId] = useState(1);
-
     const [city, setCity] = useState("");
-
-    useImperativeHandle(ref, () => ({
-        handleSubmit: (cityId) => {
-            const filteredCity = cities.filter((city) => city.cityId === cityId);
-            var selectedCity = filteredCity.map((item) => item.cityName);
-            selectedCity = selectedCity[0];
-            setCity(selectedCity);
-        }
-    }))
 
 
     useEffect(() => {
@@ -30,17 +19,19 @@ const CitiesList = forwardRef((props, ref) => {
         <>
             <select onChange={(event) => {
                 console.log(event.target.value);
-                setCityId(event.target.value);
-            }}>
+                setCity(event.target.value);
+                props.onChange(event.target.value);
+            }}
+            >
                 {cities.map((city) => {
                     return (
-                        <option key={city.cityId} value={city.cityId}>{city.cityName}</option>
+                        <option key={city.cityId} value={city.cityName}>{city.cityName}</option>
                     );
                 })}
             </select>
         </>
     );
 
-});
+};
 
 export default CitiesList;
